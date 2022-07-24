@@ -84,8 +84,15 @@ def _train_and_save_model(config_file:str):
     
     model.train(data, total_examples=model.corpus_count, epochs=model.epochs)
     
+    # Save model and dataframe
     model.save(config['MODEL']['save_as'])
-    df[['event_date','product_id','category_id','category_code','brand','price','user_id']].to_csv(config['DATA']['save_as'], index=False)
+    df[['event_date',
+        'product_id',
+        'category_id',
+        'category_code',
+        'brand',
+        'price',
+        'user_id']].to_csv(config['DATA']['save_as'], index=False)
     
     
 
@@ -146,9 +153,11 @@ def get_similar_product(model:Word2Vec, df:pd.DataFrame, product_id:int)->pd.Dat
     try:
         sim_product = model.wv.most_similar(positive=[str(product_id)])
     
-        return df.loc[df['product_id'].isin([int(word[0]) for word in sim_product])][['category_code',
-                                                                                      'brand',
-                                                                                       'product_id']].drop_duplicates()
+        return df.loc[df['product_id'].isin([int(word[0]) 
+                                             for word in sim_product])][[
+                                                     'category_code',
+                                                     'brand',
+                                                     'product_id']].drop_duplicates()
     except KeyError:
         return f"Cannot find the specified product with id {product_id}"
     
@@ -176,11 +185,12 @@ def recommend_next_purchase(model: Word2Vec, df:pd.DataFrame, user_id:int)->pd.D
         # Get recommendations for next purchase
         output_words = model.predict_output_word([str(product) for product in viewed_products])
         
-        return df.loc[df['product_id'].isin([int(word[0]) for word in output_words])][['category_code',
-                                                                                       'brand',
-                                                                                       'product_id']].drop_duplicates()
+        return df.loc[df['product_id'].isin([int(word[0]) 
+                                             for word in output_words])][[
+                                                     'category_code',
+                                                     'brand',
+                                                     'product_id']].drop_duplicates()
             
     except KeyError:
-        f"Cannot find the specified user with id {user_id}"
+        return f"Cannot find the specified user with id {user_id}"
         
-    
