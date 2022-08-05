@@ -1,5 +1,5 @@
 # xlslim_blogs
-Blogs with Python code using xlslim addin.
+Blogs with Python code using xlSlim addin.
 Find out more about how xlSlim can help you using Python for Excel here: https://xlslim.com/
 
 The blogs cover various topics:
